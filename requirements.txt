@@ -1,0 +1,33 @@
+# Core API
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# Database - PostgreSQL
+sqlalchemy
+psycopg[binary]
+alembic
+
+# Authentication / Security
+PyJWT
+passlib[argon2]
+python-multipart
+
+# Redis / Stream Processing
+redis
+
+# Machine Learning
+numpy
+pandas
+scikit-learn
+joblib
+
+# LLM / LangChain
+langchain
+langchain-core
+langchain-community
+httpx
+
+# Configuration / Utilities
+python-dotenv
