@@ -1,7 +1,29 @@
-.venv
+# Virtual environment
+.venv/
+
+# Environment variables / secrets
 .env
 .env.example
-.vscode
+
+# Python cache
 __pycache__/
-node
-_modules/
+*.py[cod]
+*.pyo
+
+# uv
+.uv/
+
+# IDE
+.vscode/
+
+# Node
+node_modules/
+
+# Build / packaging
+dist/
+build/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
