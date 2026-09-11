@@ -1,33 +1,19 @@
-# Core API
+# Server and Framework
 fastapi
-uvicorn[standard]
-pydantic
+uvicorn
+
+# Database
+sqlalchemy[asyncio]
+asyncpg
 pydantic-settings
 
-# Database - PostgreSQL
-sqlalchemy
-psycopg[binary]
-alembic
+# Hashing Password and Encryption
+passlib[bcrypt]
+python-jose[cryptography]
 
-# Authentication / Security
-PyJWT
-passlib[argon2]
+# Rate Limiting
+slowapi
 python-multipart
 
-# Redis / Stream Processing
-redis
-
-# Machine Learning
-numpy
-pandas
-scikit-learn
-joblib
-
-# LLM / LangChain
-langchain
-langchain-core
-langchain-community
-httpx
-
-# Configuration / Utilities
+# Utils packages
 python-dotenv

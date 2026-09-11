@@ -1,1 +1,0 @@
-"""The databse operation is performed here """
