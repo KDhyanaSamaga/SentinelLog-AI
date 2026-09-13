@@ -17,3 +17,9 @@ python-multipart
 
 # Utils packages
 python-dotenv
+
+# AI
+numpy
+pandas
+torch
+scikit-learn
