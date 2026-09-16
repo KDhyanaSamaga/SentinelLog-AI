@@ -23,3 +23,6 @@ numpy
 pandas
 torch
 scikit-learn
+
+# LLM
+huggingface_hub
