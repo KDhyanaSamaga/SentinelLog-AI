@@ -1,40 +1,54 @@
-from pydantic import BaseModel, EmailStr, Field
+from uuid import UUID
+from pydantic import BaseModel, EmailStr, Field, model_validator
 
-
-class Register_Organization(BaseModel):
-    organization_name: str = Field(min_length=2, max_length=255)
+class RegisterOrganization(BaseModel):
+    organization_name: str = Field(min_length=2,max_length=255)
     organization_email: EmailStr
-    organization_phone: str = Field(min_length=10, max_length=15)
-    organization_hashed_password: str = Field(min_length=8, max_length=255)
-    is_active:bool | None=None
-    is_verified:bool | None=None
-
-class Login_Organization(BaseModel):
+    organization_phone: str = Field(min_length=10,max_length=15)
+    password: str = Field(min_length=8,max_length=128)
+    
+class LoginOrganization(BaseModel):
     organization_email: EmailStr
-    organization_hashed_password: str 
+    password: str = Field(min_length=1,max_length=128)
 
-class Change_Organization_Password(BaseModel):
-    old_password:str
-    new_password:str
-    confirm_new_password:str
+class ChangeOrganizationPassword(BaseModel):
+    old_password: str = Field(min_length=1,max_length=128)
+    new_password: str = Field(min_length=8,max_length=128)
+    confirm_new_password: str = Field(min_length=8,max_length=128)
 
-class Get_Organization_Profile(BaseModel):
-    organization_name: str 
+    @model_validator(mode="after")
+    def validate_passwords(self):
+        if self.new_password != self.confirm_new_password:
+            raise ValueError("New passwords do not match")
+
+        return self
+
+class OrganizationProfile(BaseModel):
+    unique_id: UUID
+    organization_name: str
     organization_email: EmailStr
     organization_phone: str
-    is_active:bool | None=None
-    is_verified:bool | None=None
+    is_active: bool
+    is_verified: bool
 
-class  Update_Organization(BaseModel):
-    organization_name: str 
-    organization_email: EmailStr
-    organization_phone: str
+class UpdateOrganization(BaseModel):
+    organization_name: str | None = Field(default=None,min_length=2,max_length=255)
+    organization_email: EmailStr | None = None
+    organization_phone: str | None = Field(default=None,min_length=10,max_length=15)
 
-class Delete_Organization(BaseModel):
-    organization_email: EmailStr
 
-class Create_Admin(BaseModel):
+class CreateAdmin(BaseModel):
+    admin_name: str = Field(min_length=3,max_length=255)
+    admin_email: EmailStr
+    admin_phone: str = Field(min_length=10,max_length=15)
+    admin_employee_id: str = Field(min_length=1,max_length=100)
+    password: str = Field(min_length=8,max_length=128)
+
+class AdminResponse(BaseModel):
+    unique_id: UUID
     admin_name: str
     admin_email: EmailStr
     admin_phone: str
-    admin_password: str
+    admin_employee_id: str
+    is_active: bool
+    is_verified: bool
