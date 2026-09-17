@@ -25,7 +25,7 @@ async def health_check():
 
     try:
         client = InferenceClient(
-            model="Qwen/Qwen2.5-72B-Instruct", token=os.getenv("HUGGINGFACE_API_KEY")
+            model="Qwen/Qwen2.5-72B-Instruct", token=os.getenv("HF_TOKEN")
         )
 
         response =  client.chat.completions(
@@ -47,7 +47,7 @@ async def analyze_log(payload: LogAnalysisRequest):
     try:
         client = InferenceClient(
                     model="Qwen/Qwen2.5-72B-Instruct",
-                    token=os.getenv("HUGGINGFACE_API_KEY")
+                    token=os.getenv("HF_TOKEN")
                 )
         response = client.chat.completions.create(
             messages=[
@@ -71,5 +71,5 @@ async def analyze_log(payload: LogAnalysisRequest):
     except Exception as e:
         raise HTTPException(
             status_code = 500,
-            detail = f"{e}"
+            detail = f"Failed to process {e}"
         )

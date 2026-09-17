@@ -1,23 +1,16 @@
 import uuid
 
-from sqlalchemy import Boolean, DateTime, String
+from sqlalchemy import Boolean, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from app.core.database import Base
+from admin.models import Users
 
-
-class User(Base):
-    """
-    Represents an organization account.
-
-    This table stores only authentication and organization-level
-    information. Log data is stored separately and references this
-    organization's ID.
-    """
-
-    __tablename__ = "users"
+class Organization(Base):
+    # Name of the table
+    __tablename__ = "organization"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -37,10 +30,21 @@ class User(Base):
         index=True,
     )
 
-    hashed_password: Mapped[str] = mapped_column(
+    organization_phone: Mapped[str] = mapped_column(
+        String(15),
+        nullable=False,
+    )
+
+    organization_hashed_password: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
     )
+
+    # subscription_plan: Mapped[str] = mapped_column(
+    #     String(50),
+    #     default="free",
+    #     nullable=False,
+    # )
 
     is_active: Mapped[bool] = mapped_column(
         Boolean,
@@ -66,3 +70,10 @@ class User(Base):
         onupdate=func.now(),
         nullable=False,
     )
+
+    users: Mapped[list["Users"]] = relationship(
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
+
+
