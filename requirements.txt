@@ -8,6 +8,9 @@ asyncpg
 pydantic-settings
 psycopg[binary]
 
+# Database Migrations
+alembic
+
 # Hashing Password and Encryption
 passlib[bcrypt]
 python-jose[cryptography]
