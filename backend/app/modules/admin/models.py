@@ -7,9 +7,9 @@ from sqlalchemy.sql import func
 
 from app.core.database import Base
 
-from organization.models import Organization
+from app.modules.organization.models import Organization
 
-class Users(Base):
+class Admin(Base):
     __tablename__ = "admin"
 
     id: Mapped[uuid.UUID] = mapped_column(

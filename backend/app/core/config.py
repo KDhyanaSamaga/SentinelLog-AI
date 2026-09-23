@@ -1,8 +1,10 @@
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 
-load_dotenv()
+ENV_FILE = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(ENV_FILE)
 
 
 class Settings(BaseSettings):
@@ -14,7 +16,7 @@ class Settings(BaseSettings):
     AUTO_REFRESH_THRESHOLD_SECONDS: int =  int(os.getenv("AUTO_REFRESH_THRESHOLD_SECONDS"))
 
     class Config:
-        env_file = ".env"
+        env_file = ENV_FILE
 
 settings = Settings()
 

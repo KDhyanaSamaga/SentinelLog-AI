@@ -1,7 +1,14 @@
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from app.core.config import settings
 
-engine = create_async_engine(settings.DATABASE_URL, echo=True)
+
+
+class Base(DeclarativeBase):
+    """Shared SQLAlchemy metadata base for application models and Alembic."""
+
+
+engine = create_async_engine(settings.DATABASE_URL, echo=False)
 AsyncSessionLocal = async_sessionmaker(
     engine, 
     class_=AsyncSession, 
