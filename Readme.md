@@ -11,3 +11,39 @@
 3. **Limit LLM involvement to High-risk events only, keeping routine and low-risk logs out of the expensive analysis path entirely.**
 4. **Use the LLM, when it is invoked, to explain flagged incidents in plain language, identify the probable attack type, and map the observed behavior to the MITRE ATT&CK framework.**
 5. **Produce response recommendations for high-risk incidents rather than raw alerts with no next step.**
+
+   
+---
+```Text
+                 RAW SECURITY LOG
+                         │
+                         ▼
+                ┌─────────────────┐
+                │ Log Processing  │
+                │ / Parsing       │
+                └────────┬────────┘
+                         │
+                         ▼
+                ┌─────────────────┐
+                │ ML Risk         │
+                │ Classification  │
+                └────────┬────────┘
+                         │
+             ┌───────────┼───────────┐
+             ▼           ▼           ▼
+           LOW         MEDIUM       HIGH
+             │           │           │
+             │           │           ▼
+             │           │      ┌───────────┐
+             │           │      │    LLM    │
+             │           │      └─────┬─────┘
+             │           │            │
+             │           │            ▼
+             │           │     Attack explanation
+             │           │     MITRE ATT&CK mapping
+             │           │     Response recommendation
+             │           │
+             └───────────┴────────────┐
+                                      ▼
+                                  Dashboard
+```
