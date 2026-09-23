@@ -6,6 +6,7 @@ uvicorn
 sqlalchemy[asyncio]
 asyncpg
 pydantic-settings
+psycopg[binary]
 
 # Hashing Password and Encryption
 passlib[bcrypt]
