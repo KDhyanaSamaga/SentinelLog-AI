@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
     REFRESH_TOKEN_EXPIRE_DAYS: int =  int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"))
     AUTO_REFRESH_THRESHOLD_SECONDS: int =  int(os.getenv("AUTO_REFRESH_THRESHOLD_SECONDS"))
+    HF_TOKEN: str = os.getenv("HF_TOKEN")
 
     class Config:
         env_file = ENV_FILE

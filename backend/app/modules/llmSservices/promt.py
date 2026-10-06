@@ -1,5 +1,4 @@
-from schemas import LogAnalysisRequest
-
+from app.modules.llmSservices.schemas import LogAnalysisRequest
 
 def prompt(request: LogAnalysisRequest) -> str:
     return f"""
@@ -31,3 +30,4 @@ def prompt(request: LogAnalysisRequest) -> str:
 
             Your response should be a direct message explaining what the log indicates and whether there is a potential security issue.
         """
+
