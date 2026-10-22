@@ -85,5 +85,5 @@ class Admin(Base):
     )
 
     organization: Mapped["Organization"] = relationship(
-        back_populates="users",
+        back_populates="admins",
     )

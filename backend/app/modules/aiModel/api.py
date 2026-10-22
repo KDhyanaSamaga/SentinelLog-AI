@@ -1,3 +1,4 @@
+import joblib
 import logging
 from app.core.config import Settings
 
@@ -11,6 +12,7 @@ settings = Settings()
 
 router = APIRouter(prefix="/model",tags=["AI-Model"])
 model_path = r'D:\SentinelLog-AI\backend\app\modules\aiModel\hdfs_log_classifier.joblib'
+model = joblib.load(model_path)
 
 @router.post('/log')
 def get_log():

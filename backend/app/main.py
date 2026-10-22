@@ -1,27 +1,35 @@
 """
-This is the entry point of your FastAPI application.
+SentinelLog-AI — Application entry point.
 
 Run:
     uvicorn app.main:app --reload
 
-Python starts from main.py.
-This file creates the FastAPI application and registers
-the application routes/routers.
+This file creates the FastAPI application, registers all routers,
+and configures middleware (rate limiting, error handling).
 """
 
 from fastapi import FastAPI
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
-from app.modules.llmSservices.api import router as llm_router
+from app.core.rate_limiter import limiter
 from app.health import router as health_router
+from app.modules.auth.api import router as auth_router
+from app.modules.llmSservices.api import router as llm_router
+from app.modules.organization.api import router as org_router
 
 app = FastAPI(
-    title="Log-Analysis-AI",
-    description="Backend API",
+    title="SentinelLog-AI",
+    description="Security log analysis backend with ML triage and LLM-powered incident response.",
     version="1.0.0",
 )
 
-# Register routers
+# ── Rate limiter middleware ───────────────────────────────────────────
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# ── Routers ───────────────────────────────────────────────────────────
 app.include_router(health_router)
+app.include_router(auth_router)
+app.include_router(org_router)
 app.include_router(llm_router)
-
-

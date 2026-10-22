@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 
 from app.core.database import Base
 
+
 class Organization(Base):
     # Name of the table
     __tablename__ = "organization"
@@ -70,9 +71,8 @@ class Organization(Base):
         nullable=False,
     )
 
-    users: Mapped[list["Users"]] = relationship(
+    admins: Mapped[list["Admin"]] = relationship(
+        "Admin",
         back_populates="organization",
         cascade="all, delete-orphan",
     )
-
-

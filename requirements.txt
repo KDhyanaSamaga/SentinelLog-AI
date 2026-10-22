@@ -1,6 +1,6 @@
 # Server and Framework
 fastapi
-uvicorn
+uvicorn[standard]
 
 # Database
 sqlalchemy[asyncio]
@@ -11,13 +11,18 @@ psycopg[binary]
 # Database Migrations
 alembic
 
-# Hashing Password and Encryption
-passlib[bcrypt]
-python-jose[cryptography]
+# Password Hashing (Argon2id)
+argon2-cffi
+
+# JWT
+PyJWT
 
 # Rate Limiting
 slowapi
 python-multipart
+
+# Validation
+email-validator
 
 # Utils packages
 python-dotenv

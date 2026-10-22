@@ -1,85 +1,198 @@
-from fastapi import FastAPI
+"""
+Organization management API endpoints.
 
-app = FastAPI(title="Organization API")
+Mounted under ``/api/v1/organization``.  All endpoints require
+authentication and are scoped to the caller's organization.
+"""
 
+from __future__ import annotations
 
-# =========================
-# Authentication
-# =========================
+from uuid import UUID
 
-@app.post("/auth/register")
-def register_organization():
-    ...
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.database import get_db
+from app.modules.auth.dependencies import (
+    get_current_organization,
+    require_permission,
+)
+from app.modules.auth.types import AuthenticatedPrincipal
+from app.modules.organization.schemas import (
+    AdminResponse,
+    CreateAdmin,
+    OrganizationProfile,
+    UpdateOrganization,
+)
+from app.modules.organization import services as org_svc
 
-@app.post("/auth/login")
-def login_organization():
-    ...
-
-
-@app.post("/auth/logout")
-def logout_organization():
-    ...
-
-
-@app.post("/auth/change-password")
-def change_organization_password():
-    ...
-
-
-@app.post("/auth/forgot-password")
-def forgot_password():
-    ...
-
-
-@app.post("/auth/reset-password")
-def reset_password():
-    ...
+router = APIRouter(
+    prefix="/api/v1/organization",
+    tags=["Organization"],
+)
 
 
-# =========================
-# Organization
-# =========================
-
-@app.get("/organization")
-def get_organization_profile():
-    ...
+# ═════════════════════════════════════════════════════════════════════
+# Organization profile
+# ═════════════════════════════════════════════════════════════════════
 
 
-@app.patch("/organization")
-def update_organization():
-    ...
+@router.get(
+    "",
+    response_model=OrganizationProfile,
+    summary="Get organization profile",
+)
+async def get_organization_profile(
+    principal: AuthenticatedPrincipal = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """Retrieve the authenticated organization's profile."""
+    try:
+        return await org_svc.get_organization_profile(db, principal.organization_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Organization not found.",
+        )
 
 
-@app.delete("/organization")
-def delete_organization():
-    ...
+@router.patch(
+    "",
+    response_model=OrganizationProfile,
+    summary="Update organization profile",
+    dependencies=[Depends(require_permission("organization:manage"))],
+)
+async def update_organization(
+    body: UpdateOrganization,
+    principal: AuthenticatedPrincipal = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update the authenticated organization's profile fields."""
+    try:
+        return await org_svc.update_organization_profile(
+            db,
+            principal.organization_id,
+            organization_name=body.organization_name,
+            organization_email=body.organization_email,
+            organization_phone=body.organization_phone,
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Organization not found.",
+        )
 
 
-# =========================
-# Organization Admins
-# =========================
-
-@app.post("/organization/admins")
-def create_admin():
-    ...
-
-
-@app.get("/organization/admins")
-def list_admins():
-    ...
-
-
-@app.get("/organization/admins/{admin_id}")
-def get_admin():
-    ...
-
-
-@app.patch("/organization/admins/{admin_id}")
-def update_admin():
-    ...
+@router.delete(
+    "",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete organization",
+    dependencies=[Depends(require_permission("organization:manage"))],
+)
+async def delete_organization(
+    principal: AuthenticatedPrincipal = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete the authenticated organization and cascade to admins."""
+    try:
+        await org_svc.delete_organization(db, principal.organization_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Organization not found.",
+        )
 
 
-@app.delete("/organization/admins/{admin_id}")
-def delete_admin():
-    ...
+# ═════════════════════════════════════════════════════════════════════
+# Organization admins
+# ═════════════════════════════════════════════════════════════════════
+
+
+@router.post(
+    "/admins",
+    response_model=AdminResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create an admin",
+    dependencies=[Depends(require_permission("users:manage"))],
+)
+async def create_admin(
+    body: CreateAdmin,
+    principal: AuthenticatedPrincipal = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """Create an admin within the authenticated organization."""
+    try:
+        return await org_svc.create_admin_for_organization(
+            db,
+            principal.organization_id,
+            name=body.admin_name,
+            email=body.admin_email,
+            phone=body.admin_phone,
+            employee_id=body.admin_employee_id,
+            password=body.password,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        )
+
+
+@router.get(
+    "/admins",
+    response_model=list[AdminResponse],
+    summary="List admins",
+    dependencies=[Depends(require_permission("users:manage"))],
+)
+async def list_admins(
+    principal: AuthenticatedPrincipal = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all admins belonging to the authenticated organization."""
+    return await org_svc.list_organization_admins(db, principal.organization_id)
+
+
+@router.get(
+    "/admins/{admin_id}",
+    response_model=AdminResponse,
+    summary="Get an admin",
+    dependencies=[Depends(require_permission("users:manage"))],
+)
+async def get_admin(
+    admin_id: UUID,
+    principal: AuthenticatedPrincipal = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get a single admin, scoped to the authenticated organization."""
+    try:
+        return await org_svc.get_organization_admin(
+            db, principal.organization_id, admin_id,
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Admin not found.",
+        )
+
+
+@router.delete(
+    "/admins/{admin_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete an admin",
+    dependencies=[Depends(require_permission("users:manage"))],
+)
+async def delete_admin(
+    admin_id: UUID,
+    principal: AuthenticatedPrincipal = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete an admin, scoped to the authenticated organization."""
+    try:
+        await org_svc.delete_organization_admin(
+            db, principal.organization_id, admin_id,
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Admin not found.",
+        )
