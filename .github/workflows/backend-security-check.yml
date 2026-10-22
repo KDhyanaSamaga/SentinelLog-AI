@@ -1,0 +1,44 @@
+name: Code & Dependency Security Check
+
+# When we push to this branch this works automatically
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# Now need to assign a JOb
+jobs:
+  check-backends:
+    name: Backend Linting and Security Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep SAST (Backend)
+        uses: returntocorp/semgrep-action@v2
+        with:
+          config: >-
+            p/owasp-top-ten
+            p/python
+            p/fastapi
+          generate_sarif: "1"
+
+      - name: Run Trivy Dependency Scan (Backend)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-backend-results.sarif"
+
+      - name: Upload Backend Results to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: "trivy-backend-results.sarif"
+          category: "backend-trivy"
