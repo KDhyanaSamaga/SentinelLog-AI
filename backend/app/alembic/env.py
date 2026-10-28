@@ -9,7 +9,9 @@ from app.core.database import Base
 
 # Import every model module so all mapped tables are registered on Base.metadata.
 from app.modules.admin import models as admin_models  # noqa: F401
+from app.modules.auth import models as auth_models  # noqa: F401
 from app.modules.organization import models as organization_models  # noqa: F401
+from app.modules.log import models as log_models  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

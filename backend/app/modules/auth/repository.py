@@ -137,6 +137,17 @@ async def get_session_for_refresh(
     return session, refresh_token
 
 
+async def get_auth_session(
+    db: AsyncSession,
+    session_id: uuid.UUID,
+) -> AuthSession | None:
+    """Load a session for access-token revocation and expiry checks."""
+    result = await db.execute(
+        select(AuthSession).where(AuthSession.id == session_id)
+    )
+    return result.scalars().first()
+
+
 async def rotate_refresh_token(
     db: AsyncSession,
     *,

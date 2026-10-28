@@ -472,6 +472,15 @@ async def get_authenticated_principal(
     if identity is None:
         raise AuthenticationError("Identity not found.")
 
+    session = await auth_repo.get_auth_session(db, sid)
+    if (
+        session is None
+        or session.identity_id != identity_id
+        or session.identity_type != identity_type
+        or not session.is_active
+    ):
+        raise AuthenticationError("Session is no longer active.")
+
     if not identity.is_active:
         raise AccountDisabledError("This account has been deactivated.")
 

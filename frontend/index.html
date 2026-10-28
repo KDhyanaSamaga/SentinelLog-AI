@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SentinelLog AI | Operations</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section id="login-view" class="auth-card">
+      <div class="brand-mark">SL</div>
+      <p class="eyebrow">SENTINELLOG AI / 1.0</p>
+      <h1>Log intelligence, without the noise.</h1>
+      <p class="muted">Sign in to ingest, triage, and monitor your organization’s security logs.</p>
+      <form id="login-form" class="stack">
+        <label>Email<input id="email" type="email" required autocomplete="email"></label>
+        <label>Password<input id="password" type="password" required autocomplete="current-password"></label>
+        <label>API base URL<input id="api-base" value="http://localhost:8000" required></label>
+        <button class="primary" type="submit">Open command center</button>
+        <p id="login-error" class="error" role="alert"></p>
+      </form>
+    </section>
+
+    <section id="dashboard-view" hidden>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">SENTINELLOG AI / OPERATIONS</p>
+          <h1>Security log command center</h1>
+        </div>
+        <div class="topbar-actions"><span id="last-updated" class="muted">Waiting for telemetry</span><button id="logout" class="ghost">Sign out</button></div>
+      </header>
+
+      <section class="metrics" aria-label="Log metrics">
+        <article class="metric-card"><span>Analyzed</span><strong id="metric-total">0</strong><small>persisted records</small></article>
+        <article class="metric-card safe"><span>Safe</span><strong id="metric-safe">0</strong><small>INFO predictions</small></article>
+        <article class="metric-card warn"><span>Warn / error</span><strong id="metric-warn">0</strong><small>requires attention</small></article>
+        <article class="metric-card pending"><span>Live pending</span><strong id="metric-pending">0</strong><small id="metric-processing">0 processing</small></article>
+      </section>
+
+      <section class="workspace-grid">
+        <article class="panel ingest-panel">
+          <div class="panel-heading"><div><p class="eyebrow">INGEST</p><h2>Send logs for triage</h2></div><span class="live-dot">PIPELINE ONLINE</span></div>
+          <div class="tabs"><button class="tab active" data-tab="single">Single log</button><button class="tab" data-tab="file">Upload file</button></div>
+          <form id="single-form" class="stack tab-panel">
+            <label>Log content<textarea id="content" rows="4" required placeholder="Failed login attempt from 10.0.0.4"></textarea></label>
+            <div class="form-grid"><label>Component<input id="component" value="SecurityService" required></label><label>Time <input id="time" type="time" step="1" required></label></div>
+            <label>Raw log (optional)<input id="raw-log" placeholder="Original line for audit trace"></label>
+            <button class="primary" type="submit">Analyze log</button>
+          </form>
+          <div id="file-panel" class="tab-panel" hidden>
+            <label class="dropzone" for="log-file"><strong>Drop a log file here</strong><span>CSV, JSONL, or plain text · up to 100 lines</span><input id="log-file" type="file" accept=".csv,.json,.jsonl,.log,.txt"></label>
+            <p id="file-name" class="muted">No file selected</p>
+            <button id="upload-file" class="primary" type="button" disabled>Upload and analyze</button>
+            <p class="hint">CSV columns: <code>content, component, hour, minute, second</code>. Plain text lines use SecurityService and the current time.</p>
+          </div>
+          <div id="ingest-result" class="result" aria-live="polite"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">ACTIVITY</p><h2>Recent telemetry</h2></div><button id="refresh" class="ghost">Refresh</button></div>
+          <div id="activity" class="activity"><p class="muted">No logs loaded yet.</p></div>
+        </article>
+      </section>
+
+      <section id="explanation-panel" class="panel explanation-panel" hidden>
+        <div class="panel-heading">
+          <div><p class="eyebrow">LLM EXPLAINABILITY</p><h2>Incident explanation</h2></div>
+          <button id="close-explanation" class="ghost" type="button">Close</button>
+        </div>
+        <div id="explanation-content"></div>
+      </section>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
