@@ -1,19 +1,148 @@
-{
-  "content": "PacketResponder 1 for block blk_38865049 terminating",
-  "component": "dfs.DataNode$PacketResponder",
-  "hour": 20,
-  "minute": 36,
-  "second": 15,
-  "time_gap": 0,
-  "pid_freq": 1
-}
 
-{
-  "content": "ERROR Failed login attempts exceeded threshold from 10.0.0.99",
-  "component": "SecurityService",
-  "hour": 20,
-  "minute": 37,
-  "second": 15,
-  "time_gap": 60,
-  "pid_freq": 25
-}
+  {
+    "content": "PacketResponder 1 for block blk_38865049 terminating",
+    "component": "dfs.DataNode$PacketResponder",
+    "hour": 20,
+    "minute": 36,
+    "second": 15,
+    "time_gap": 0,
+    "pid_freq": 1
+  },
+  {
+    "content": "Received block blk_72839102 from /10.0.0.12",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 37,
+    "second": 20,
+    "time_gap": 65,
+    "pid_freq": 2
+  },
+  {
+    "content": "Completed block replication for blk_55281930",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 38,
+    "second": 10,
+    "time_gap": 50,
+    "pid_freq": 1
+  },
+  {
+    "content": "Block report sent successfully to NameNode",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 39,
+    "second": 5,
+    "time_gap": 55,
+    "pid_freq": 1
+  },
+  {
+    "content": "Heartbeat received from DataNode 10.0.0.15",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 40,
+    "second": 15,
+    "time_gap": 70,
+    "pid_freq": 3
+  },
+  {
+    "content": "Successfully completed file write operation",
+    "component": "dfs.FSNamesystem",
+    "hour": 20,
+    "minute": 41,
+    "second": 30,
+    "time_gap": 75,
+    "pid_freq": 1
+  },
+  {
+    "content": "Deleted block blk_99182736 from DataNode",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 42,
+    "second": 10,
+    "time_gap": 40,
+    "pid_freq": 2
+  },
+  {
+    "content": "Successfully registered DataNode 10.0.0.21",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 43,
+    "second": 25,
+    "time_gap": 75,
+    "pid_freq": 1
+  }
+
+
+
+  {
+    "content": "ERROR Failed login attempts exceeded threshold from 10.0.0.99",
+    "component": "SecurityService",
+    "hour": 20,
+    "minute": 37,
+    "second": 15,
+    "time_gap": 60,
+    "pid_freq": 25
+  },
+  {
+    "content": "ERROR DataNode failed to write block blk_82910283 due to disk failure",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 44,
+    "second": 10,
+    "time_gap": 45,
+    "pid_freq": 8
+  },
+  {
+    "content": "CRITICAL Unauthorized access attempt detected from 192.168.1.105",
+    "component": "SecurityService",
+    "hour": 20,
+    "minute": 45,
+    "second": 30,
+    "time_gap": 80,
+    "pid_freq": 35
+  },
+  {
+    "content": "ERROR Block replication failed for blk_77281930 after multiple retries",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 46,
+    "second": 5,
+    "time_gap": 35,
+    "pid_freq": 12
+  },
+  {
+    "content": "ERROR NameNode failed to communicate with DataNode 10.0.0.25",
+    "component": "dfs.FSNamesystem",
+    "hour": 20,
+    "minute": 47,
+    "second": 20,
+    "time_gap": 75,
+    "pid_freq": 10
+  },
+  {
+    "content": "CRITICAL Multiple authentication failures detected for admin account",
+    "component": "AuthenticationManager",
+    "hour": 20,
+    "minute": 48,
+    "second": 45,
+    "time_gap": 85,
+    "pid_freq": 40
+  },
+  {
+    "content": "ERROR Disk usage exceeded critical threshold on DataNode 10.0.0.18",
+    "component": "dfs.DataNode",
+    "hour": 20,
+    "minute": 49,
+    "second": 10,
+    "time_gap": 25,
+    "pid_freq": 15
+  },
+  {
+    "content": "ERROR Suspicious repeated connection attempts from 172.16.0.99",
+    "component": "NetworkMonitor",
+    "hour": 20,
+    "minute": 50,
+    "second": 55,
+    "time_gap": 105,
+    "pid_freq": 30
+  }

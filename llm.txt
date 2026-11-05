@@ -1,0 +1,13 @@
+{
+  "raw_log": "ERROR DataNode: Failed to read block blk_1073741825 from storage volume /data/hadoop/dfs/data. Disk I/O exception occurred.",
+  "log_type": "HDFS",
+  "machine": "hadoop-datanode-01",
+  "extra_context": "DataNode encountered a disk I/O failure while accessing a block. Potential disk failure or data corruption. Requires investigation."
+}
+
+{
+  "raw_log": "WARN BlockManager: Excessive block deletion requests detected from client 192.168.1.105. Multiple replicas marked for deletion within a short interval.",
+  "log_type": "HDFS",
+  "machine": "hadoop-namenode-01",
+  "extra_context": "Unusual block deletion activity. Could indicate unauthorized access, accidental deletion, or malicious data manipulation."
+}
