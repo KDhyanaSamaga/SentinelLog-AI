@@ -34,7 +34,7 @@ class LLMService:
     for high availability and resilience when API quotas or network constraints occur.
     """
 
-    MODEL_NAME = "Qwen/Qwen2.5-72B-Instruct"
+    MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
     FALLBACK_MODEL_NAME = "Sentinel-CyberHeuristic-Expert"
 
     @property

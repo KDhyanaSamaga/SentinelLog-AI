@@ -16,6 +16,12 @@
       <form id="login-form" class="stack">
         <label>Email<input id="email" type="email" required autocomplete="email"></label>
         <label>Password<input id="password" type="password" required autocomplete="current-password"></label>
+        <label>Account type
+          <select id="identity-type">
+            <option value="admin" selected>Admin</option>
+            <option value="organization">Organization</option>
+          </select>
+        </label>
         <label>API base URL<input id="api-base" value="http://localhost:8000" required></label>
         <button class="primary" type="submit">Open command center</button>
         <p id="login-error" class="error" role="alert"></p>

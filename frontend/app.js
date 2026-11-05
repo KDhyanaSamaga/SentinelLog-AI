@@ -106,7 +106,7 @@ async function loadExplanation(logId) {
 $("login-form").addEventListener("submit", async (event) => {
   event.preventDefault(); state.api = $("api-base").value.replace(/\/$/, ""); localStorage.setItem("sentinel_api", state.api);
   $("login-error").textContent = "";
-  try { const response = await fetch(`${state.api}/api/v1/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: $("email").value, password: $("password").value, identity_type: "organization" }) }); const data = await response.json(); if (!response.ok) throw new Error(data.detail || "Login failed."); state.token = data.access_token; localStorage.setItem("sentinel_access_token", state.token); showDashboard(); } catch (error) { $("login-error").textContent = error.message; }
+  try { const response = await fetch(`${state.api}/api/v1/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: $("email").value, password: $("password").value, identity_type: $("identity-type").value }) }); const data = await response.json(); if (!response.ok) throw new Error(data.detail || "Login failed."); state.token = data.access_token; localStorage.setItem("sentinel_access_token", state.token); showDashboard(); } catch (error) { $("login-error").textContent = error.message; }
 });
 $("logout").addEventListener("click", () => { localStorage.removeItem("sentinel_access_token"); state.token = null; showLogin(); });
 $("refresh").addEventListener("click", loadDashboard);
