@@ -1,0 +1,1096 @@
+% =====================================================================
+%  SentinelLog-AI : Smart Security Log Detection and Response
+%  Project Report  --  compile with:  pdflatex main.tex  (run twice)
+%  Everything (text, tables, diagrams, references) is in this one file.
+%  Search for "TODO" to find items you should fill in or verify.
+% =====================================================================
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,fit,calc,backgrounds}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+
+\setstretch{1.5}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0.5in}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{4pt}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\emergencystretch=2em
+\captionsetup{font=small,labelfont=bf}
+\raggedbottom
+\let\cleardoublepage\clearpage
+
+% Requested report heading sizes: chapter 24 pt, section 17 pt, subsection 12 pt.
+\makeatletter
+\renewcommand{\@makechapterhead}[1]{%
+  \vspace*{10pt}%
+  {\parindent 0pt \raggedright \normalfont
+   \ifnum \c@secnumdepth >\m@ne
+     \huge\bfseries \thechapter\quad
+   \fi
+   \fontsize{24}{29}\selectfont\bfseries #1\par
+   \nobreak\vskip 12pt}}
+\renewcommand{\@makeschapterhead}[1]{%
+  \vspace*{10pt}%
+  {\parindent 0pt \raggedright \normalfont
+   \fontsize{24}{29}\selectfont\bfseries #1\par
+   \nobreak\vskip 12pt}}
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+  {-3.5ex \@plus -1ex \@minus -.2ex}%
+  {2.3ex \@plus .2ex}%
+  {\normalfont\fontsize{17}{21}\selectfont\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\fontsize{12}{18}\selectfont\bfseries}}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\fontsize{12}{18}\selectfont\bfseries}}
+\makeatother
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small SentinelLog-AI}
+\fancyhead[R]{\small\leftmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---------- code listing style ----------
+\definecolor{codebg}{RGB}{245,245,245}
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codebg},
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{black!25},
+  xleftmargin=4pt, xrightmargin=4pt,
+  showstringspaces=false,
+  upquote=true
+}
+\lstset{style=code}
+
+% ---------- TikZ styles ----------
+\tikzset{
+  box/.style={draw,rounded corners=2pt,align=center,font=\footnotesize,minimum height=8mm,fill=blue!6,inner sep=3pt},
+  proc/.style={draw,circle,align=center,font=\scriptsize,minimum size=15mm,fill=green!10,inner sep=1pt},
+  store/.style={draw,align=center,font=\scriptsize,minimum height=7mm,fill=yellow!15,inner sep=3pt},
+  ext/.style={draw,align=center,font=\footnotesize,minimum height=8mm,fill=gray!15,inner sep=3pt},
+  arr/.style={-{Stealth[length=2.2mm]},thick},
+  lbl/.style={font=\tiny,fill=white,inner sep=1pt}
+}
+
+% =====================================================================
+\begin{document}
+
+% ------------------------- TITLE PAGE --------------------------------
+\begin{titlepage}
+\centering
+\vspace*{1.5cm}
+{\Large\bfseries PROJECT REPORT\par}
+\vspace{1.2cm}
+{\Huge\bfseries SentinelLog-AI\par}
+\vspace{0.4cm}
+{\LARGE Smart Security Log Detection and Response\par}
+\vspace{0.6cm}
+{\large An ML-first, LLM-on-demand framework for security log triage\par}
+\vspace{2cm}
+\begin{tabular}{ll}
+\textbf{Name} & K Dhyana Samaga\\[3pt]
+\textbf{Registration No.} & 261091010031\\[3pt]
+\textbf{Team Members} & Solo\\[3pt]
+\textbf{Programme} & M.Tech Cybersecurity \quad % TODO: confirm programme / department
+\end{tabular}
+\vspace{1.5cm}
+
+\textbf{Institution:} Manipal Institute of Technology, Udupi \quad % TODO: confirm
+\vspace{0.5cm}
+
+\textbf{Project repository:}\\
+\url{https://github.com/KDhyanaSamaga/SentinelLog-AI}
+\vfill
+{\large \today}
+\end{titlepage}
+
+% ------------------------- ABSTRACT ----------------------------------
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+Modern systems produce security logs faster than any team can read them, and the overwhelming majority of those logs are routine. Reading everything by hand does not scale, and sending every log to a Large Language Model (LLM) is expensive and unnecessary. SentinelLog-AI is built on a simple premise: \emph{not every log deserves the same attention}. A lightweight machine-learning classifier (TF-IDF with engineered temporal features and a Linear SVM) triages every incoming log first. Only logs flagged as abnormal are escalated to an LLM (Qwen2.5-72B-Instruct through the Hugging Face Inference API), which explains the incident in plain language, identifies the likely attack type, maps it to MITRE ATT\&CK and recommends a response. The backend is implemented in FastAPI with PostgreSQL, JWT authentication, rate limiting and an asynchronous ingestion queue, and a browser dashboard presents the results. The classifier was trained on the Loghub HDFS\_2k dataset and reached 100\% accuracy on a held-out set of 400 logs. This report also discusses why that result must be interpreted carefully, and outlines the limitations and future work.
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+% =====================================================================
+\chapter{Introduction}
+% =====================================================================
+\section{Background}
+Large volumes of security and framework logs are being created by modern information systems. These logs record system activity, departures, unusual behaviour and potential security threats, but analysing them manually is time-consuming and makes it hard for cybersecurity analysts to spot critical events quickly. LLMs can help explain security logs and potential threats. But still, analysing \emph{every} log with an LLM augments computational demand, latency and operating cost, especially when most logs represent normal activity.
+Recent research has tried out language models and generative AI for log anomaly detection and for supporting security analysts, on the whole. And thus, LogFiT studies fine-tuned language models for spotting oddities in system logs~\cite{logfit}, and work on generative AI for cybersecurity analysts studies how language models can support security analysis~\cite{balogh2024}, to a significant degree. Retrieval-Augmented Generation (RAG) has been employed to analyse AWS CloudTrail events and map threats to the MITRE ATT\&CK framework~\cite{adediran2026}, and language models have been checked for threat detection in IoT security logs~\cite{tejero2025}.
+\section{Motivation}
+Most logs are generally harmless. What's needed is a triage layer that's handling the bulk of routine traffic cheaply and reserves expensive, deeper reasoning for the few events that deserve it, in real-world scenarios. Alert fatigue for analysts and unnecessary spend on LLM inference is being caused by a framework that treats every entry as a potential incident, in many respects.
+\section{Proposed System}
+SentinelLog-AI is a multi-stage security log analysis system. In turn, routine events stay in the cheap path and are stored directly. Incoming logs are checked, structured and classified by a machine-learning model. Events classified as abnormal (or that the model can't classify confidently) are forwarded to an LLM-based analysis service that:
+\begin{itemize}[nosep]
+  \item explains the incident in natural language,
+  \item identifies the probable attack type,
+  \item maps the behaviour to MITRE ATT\&CK technique identifiers, and
+  \item recommends a response action (for example, investigating or blocking an IP address).
+\end{itemize}
+Results are persisted in PostgreSQL and shown on a dashboard.
+\section{Current Scope}
+The implemented framework includes the FastAPI backend, database models and Alembic migrations, authentication and security controls, the ML training pipeline and inference service, the LLM analysis service, an asynchronous in-process ingestion queue, and a browser dashboard (HTML/CSS/JavaScript). Really, a Redis-backed worker layer, a centralised ML inference microservice, LangChain-based orchestration and a React/Electron dashboard are part of the longer-term design and aren't yet implemented (Table~\ref{tab:status}).
+\section{Organisation of the Report}
+Chapter~2 introduces the literature survey, research gaps, problem statement and targets. Chapter~4 is outlining the design methodology. Chapter~3 covers system requirements, architecture and the threat model. So, chapter~5 is explaining the setup and how to run it. Chapter~6 reports findings and investigation, shortcomings and future work. Chapter~7 is concluding.
+
+% =====================================================================
+\chapter{Literature Survey}
+% =====================================================================
+\section{Existing Approaches}
+Existing research is exploring a few directions, including language-model-based log anomaly detection, generative AI for security analysis, retrieval-augmented threat detection and language models for IoT security logs, in real-world scenarios. And thus, four representative studies are, more accurately, summarised below.
+
+\paragraph{1. LogFiT: Log Anomaly Detection Using Fine-Tuned Language Models (2024)~\cite{logfit}.}
+LogFiT fine-tunes a pretrained BERT-based language model employing self-supervised masked prediction on \emph{normal} log data only, so it's needing no template vocabulary and no labelled oddities, to a significant degree. At inference, the model's top-$k$ token prediction accuracy is used to decide whether new log data deviates from normal behaviour, in many respects. What it reports is F1 scores above baselines on the HDFS, BGL and Thunderbird datasets. SentinelLog-AI is sharing the goal of finding unusual behaviour in logs, but adds a risk-based escalation stage and an explanation/response stage.
+
+\paragraph{2. Using Generative AI Models to Support Cybersecurity Analysts (2024)~\cite{balogh2024}.}
+Balogh et al.\ study the black-box use of LLM chatbots as a support tool for security analysts and present case studies, covering spotting vulnerabilities in Android applications, on the whole. And thus, risks and issues of employing LLMs in security tasks are also tackled by them, in real-world scenarios. And what's more, even so, this motivates the explanation role of the LLM in SentinelLog-AI. Indeed, in the meantime, the cost of using an LLM indiscriminately motivates the ML pre-filter.
+
+\paragraph{3. Retrieval-Augmented LLM for AWS Cloud Threat Detection: CloudTrail MITRE ATT\&CK Mapping (2026)~\cite{adediran2026}.}
+Adediran, Awuson-David and Ahmed evaluate a two-step RAG approach with Gemini~2.5~Pro on 200 CloudTrail events (122 malicious, 78 harmless) covering nine MITRE ATT\&CK techniques, in many respects. Indeed, the RAG-enabled model hit an estimated 78\% accuracy, 85\% precision and 79\% F1, at about 4.1~s and \$0.00376 per event, on the whole. Seeing that every event passes through the LLM, cost and latency scale with volume, and RAG-based enrichment is a possible future enhancement for SentinelLog-AI.
+
+\paragraph{4. Evaluating Language Models for Threat Detection in IoT Security Logs (2025)~\cite{tejero2025}.}
+Tejero-Fern\'andez and S\'anchez-Mac\'ian present a pipeline that's using fine-tuned LLMs for anomaly detection and mitigation recommendation on IoT security logs, on the whole. What's more, three open-source LLMs are checked, under the zero-shot, few-shot and fine-tuning methods, in many respects. Fine-tuned LLMs give better multi-class attack classification than the baselines, and detected threats are mapped to MITRE CAPEC with IoT-specific mitigation actions. And thus, standard ML classifiers are employed as baselines.
+
+\section{Comparison Survey Table}
+Table~\ref{tab:litsurvey} compares the four reference studies with the proposed SentinelLog-AI approach.
+
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}p{4cm} >{\raggedright\arraybackslash}p{4cm}@{}}
+\caption{Summary of literature survey, methodology and limitations}
+\label{tab:litsurvey}\\
+\toprule
+\textbf{Study} & \textbf{Methodology / Contribution} & \textbf{Relevance to SentinelLog-AI} & \textbf{Limitation / Opportunity}\\
+\midrule
+\endfirsthead
+\caption[]{Summary of literature survey, methodology and limitations (continued)}\\
+\toprule
+\textbf{Study} & \textbf{Methodology / Contribution} & \textbf{Relevance to SentinelLog-AI} & \textbf{Limitation / Opportunity}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r}{Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+LogFiT (Almodovar et al., 2024)~\cite{logfit} &
+BERT-based model fine-tuned with self-supervised masked prediction on normal logs; top-$k$ prediction accuracy used for anomaly decision; evaluated on HDFS, BGL, Thunderbird. &
+Research basis for applying language models to log anomaly detection. &
+Focused on anomaly detection only; does not explain incidents, map to ATT\&CK or recommend responses. SentinelLog-AI adds ML triage before deeper LLM investigation.\\
+Using Generative AI Models to Support Cybersecurity Analysts (Balogh et al., 2024)~\cite{balogh2024} &
+Black-box use of LLM chatbots as analyst support; case studies on security tasks such as Android vulnerability identification. &
+Supports using LLMs for incident explanation and analysis. &
+No automatic triage pipeline; indiscriminate LLM use raises cost. SentinelLog-AI limits the LLM to selected high-risk events.\\
+Adediran et al., 2026~\cite{adediran2026} &
+Two-step RAG with an LLM on CloudTrail events with ATT\&CK mapping; 200-event evaluation set; reports accuracy, precision, F1, latency and cost per event. &
+Reference for ATT\&CK mapping and contextual enrichment of LLM analysis. &
+Every event is processed by the LLM (cost per event); cloud-specific; small evaluation set. SentinelLog-AI uses staged ML-based selection; retrieval enrichment is future work.\\
+Tejero-Fern\'andez and S\'anchez-Mac\'ian, 2025~\cite{tejero2025} &
+Compares classical ML with zero-shot, few-shot and fine-tuned open-source LLMs on IoT logs; maps threats to MITRE CAPEC with mitigation actions. &
+Shows language models applied to security-log detection and recommendation. &
+LLMs applied to the data directly; IoT-specific. SentinelLog-AI allocates LLM effort by assessed risk.\\
+\midrule
+\textbf{Proposed SentinelLog-AI} &
+ML classification (TF-IDF + temporal/frequency features + Linear SVM) followed by LLM analysis of selected events. &
+Combines risk triage, natural-language explanation, attack identification, ATT\&CK mapping and response suggestions. &
+Needs systematic evaluation of detection performance, false positives, latency and LLM-usage reduction against an all-logs-to-LLM baseline.\\
+\end{longtable}
+\normalsize
+
+\section{Outcome of the Literature Survey}
+What the survey emphasizes is the potential of ML and LLMs for automated security-log assessment, to a significant degree. Research on generative AI for analysts is suggesting that LLMs can (to some degree) support incident analysis and the explanation of security information~\cite{balogh2024}, in real-world scenarios. LogFiT is showing the relevance of language models for log anomaly detection~\cite{logfit}, so research on IoT security logs is offering further context for checking language-model-based threat detection~\cite{tejero2025}. In fact, the value of including cybersecurity knowledge is, put simply, shown by the RAG-based AWS study when mapping events to MITRE ATT\&CK~\cite{adediran2026}.
+The principal outcome is that combining automated risk prioritisation with contextual LLM analysis is a pertinent approach for security-log detection and response, on the whole, and its efficacy must, though, be established experimentally by measuring detection performance, false-positive rate, processing time and the reduction in LLM usage compared with an method that's sending every log to an LLM, in actual application.
+
+\section{Research Gaps}
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{Risk-based selection of logs for LLM analysis.} Whether an ML selection stage can, to some extent, lower LLM usage while still catching critical events is an open question, in many respects; and thus, analysing every incoming log with an LLM increases cost and processing time.
+  \item \textbf{Integration of ML and LLM analysis.} Truly, the reviewed methods address anomaly detection, generative-AI-assisted investigation and LLM-based detection separately. The potency of the combined process must be checked with direct LLM analysis and ML-only category, in real-world scenarios.
+  \item \textbf{False positives and classification accuracy.} More accurately, normal events classified as high risk cause unnecessary LLM calls; suspicious events classified as low risk never receive deeper examination, to a significant degree; precision, recall, F1-score and confusion matrices are normally needed.
+  \item \textbf{Computational cost and efficiency.} Savings can't be assumed from the architecture alone; the number of logs forwarded to the LLM, token consumption, latency and running cost must be measured against a baseline that's sending all eligible logs to the LLM.
+\end{enumerate}
+
+\section{Problem Statement}
+Modern network environments are creating enormous volumes of security logs from servers, applications, network devices and other infrastructure, in real-world scenarios. Indeed, even as, these logs include beneficial indicators of threats, the majority represent routine activity, on the whole. Manually studying and connecting them is slow, increasingly impractical and causes alert fatigue, and static rule-based monitoring struggles with evolving attack patterns. Employing an LLM to every log introduces unnecessary computational cost and latency. There's therefore a need for an intelligent, cost-efficient security-log examination framework that automatically is reading raw logs, assesses the risk of each event, prioritises events, reserves advanced inquiry for high-risk events, and explains them, spots probable attack types, maps behaviour to MITRE ATT\&CK and recommends doable responses.
+
+\section{Objectives}
+\begin{enumerate}[label=\arabic*.]
+  \item Build a machine-learning classifier that sorts incoming logs into risk tiers based on pattern, frequency, severity and the importance of the source system, rather than treating every entry as a threat.
+  \item Parse and structure raw log data automatically so high volumes can be processed without manual formatting or cleanup.
+  \item Limit LLM involvement to high-risk events only, keeping routine and low-risk logs out of the expensive analysis path.
+  \item Use the LLM, when invoked, to explain flagged incidents in plain language, identify the probable attack type and map the behaviour to MITRE ATT\&CK.
+  \item Produce response recommendations for high-risk incidents rather than raw alerts with no next step.
+\end{enumerate}
+
+% =====================================================================
+\chapter{System Requirements and Architecture}
+% =====================================================================
+\section{System Requirements}
+SentinelLog-AI is employing a web frontend, a FastAPI backend, an ML classification component, a queue-based processing mechanism, an LLM analysis service and PostgreSQL for persistent storage, in real-world scenarios. Needs are, by design, divided into the hardware and software needs.
+
+\subsection{Hardware Requirements}
+The hardware needs depend on log volume and on whether the LLM is run locally or accessed remotely, to a significant degree. Table~\ref{tab:hw} lists suggested (not measured) specifications.
+
+\begin{table}[H]
+\centering
+\caption{Suggested hardware requirements}
+\label{tab:hw}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}p{5.6cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Component} & \textbf{Suggested requirement} & \textbf{Purpose}\\
+\midrule
+Processor & Modern multi-core processor, e.g.\ AMD Ryzen 5 or equivalent & Runs backend, ML pipeline, database and frontend\\
+RAM & 8~GB minimum for development; 16~GB or more recommended & Application execution, log processing, database operations\\
+Storage & 8~GB or more free space & Application files, dependencies, datasets, logs, database files\\
+Operating system & Windows 11 & Primary development environment\\
+Network & Internet access for remotely hosted LLMs and package downloads & Model access, package installation, external services\\
+GPU & Optional, depending on the model and inference environment & Can accelerate local LLM inference\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Software Requirements}
+\begin{table}[H]
+\centering
+\caption{Software requirements}
+\label{tab:sw}
+\small
+\renewcommand{\arraystretch}{1.0}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Category} & \textbf{Software / technology} & \textbf{Purpose}\\
+\midrule
+Operating system & Windows 11 & Development environment\\
+IDE / editor & Visual Studio Code & Development and debugging\\
+Language & Python & Backend, ML and LLM integration\\
+Frontend & HTML, CSS, JavaScript & Dashboard structure, styling and API communication\\
+Backend framework & FastAPI & REST API and component coordination\\
+ASGI server & Uvicorn & Runs the FastAPI application\\
+Feature extraction & TF-IDF, One-Hot Encoding, StandardScaler & Converts text, categorical and numeric fields into model features\\
+ML algorithm & Linear SVM (\texttt{LinearSVC}) & Classifies logs\\
+ML library & scikit-learn, pandas, NumPy, joblib & Pipeline, evaluation, model serialisation\\
+LLM model & Qwen2.5-72B-Instruct & Explains high-risk logs\\
+LLM access & Hugging Face Inference API (\texttt{huggingface\_hub}) & Remote inference\\
+Database & PostgreSQL & Logs, analysis results, incidents, users\\
+Queue & Application-level asynchronous queue (\texttt{asyncio}) & Holds ingestion/analysis tasks without Redis\\
+ORM / migrations & SQLAlchemy (async), Alembic & Database access and schema versioning\\
+Security libraries & Argon2 (\texttt{argon2-cffi}), PyJWT, SlowAPI & Password hashing, tokens, rate limiting\\
+API testing & Swagger UI / OpenAPI & Endpoint documentation and testing\\
+Configuration & Environment variables, \texttt{.env} & Secrets and settings outside source code\\
+CI security & GitHub Actions with Semgrep and Trivy & Static analysis and dependency scanning\\
+Version control & Git, GitHub & Source control\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{High-Level System Architecture}
+\subsection{Architecture Overview}
+The backend validates requests, coordinates log processing, is invoking the ML classifier, manages queued tasks, calls the LLM service when needed and stores findings in PostgreSQL, in real-world scenarios. And thus, the frontend communicates with the backend through REST APIs. Text from each log is converted to numerical features and passed with the other attributes to a Linear SVM, which anticipates the class, in actual application. Indeed, logs that are, to be sure, abnormal or unclassifiable are sent for deeper investigation to the LLM service. Task submission from task execution is being separated by the queue, so that ingestion requests are handled according to the queue's scheduling logic. The architecture is being shown by Figure~\ref{fig:arch}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth,height=0.55\textheight,keepaspectratio]{archittect.png}
+\caption{High-level architecture of SentinelLog-AI}
+\label{fig:arch}
+\end{figure}
+
+% \noindent The diagram is a logical representation. It does not imply that each component runs as a separate process, or that the queue already supports durable storage, automatic retries or distributed processing.
+
+\begin{table}[H]
+\centering
+\caption{Design target versus current implementation status}
+\label{tab:status}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Component} & \textbf{Design target} & \textbf{Current implementation}\\
+\midrule
+Risk classes & Low / Medium / High & Binary classifier (INFO vs.\ WARN) trained on HDFS; WARN is treated as high-risk and escalated\\
+Queue & Redis-based workers & In-process asynchronous FIFO queue with ticket numbers and a status endpoint\\
+LLM orchestration & LangChain & Direct call to the Hugging Face Inference API with a rule-based fallback\\
+Frontend & React + Electron & HTML/CSS/JavaScript dashboard\\
+ML serving & Centralised inference service & Model loaded in-process by the backend (\texttt{joblib})\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Functional Requirements}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{12.1cm}}
+\caption{Functional requirements}
+\label{tab:fr}\\
+\toprule
+\textbf{Requirement} & \textbf{Description}\\
+\midrule
+\endfirsthead
+\caption[]{Functional requirements (continued)}\\
+\toprule
+\textbf{Requirement} & \textbf{Description}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Log ingestion & Accept incoming security logs through the backend API (single and batch).\\
+Parsing and preprocessing & Parse raw log messages, extract relevant fields and prepare text for classification.\\
+Feature extraction & Transform log text and metadata into numerical feature vectors (TF-IDF, one-hot, scaled numerics).\\
+Risk classification & Use the trained Linear SVM to classify incoming logs.\\
+Risk-based routing & Route logs by class so that only high-risk or unclassifiable logs are submitted for LLM investigation.\\
+Task queue management & Place ingestion and analysis tasks in an application-level queue and expose queue status.\\
+LLM-based investigation & Invoke the Qwen-based LLM service to investigate selected events.\\
+Incident explanation & Generate human-readable explanations of the event and its implications.\\
+Attack classification & Identify probable attack types and MITRE ATT\&CK technique IDs.\\
+Response recommendations & Suggest actions such as investigating suspicious IPs, reviewing services or considering IP blocking.\\
+Persistent storage & Store logs, classification results, explanations and recommendations in PostgreSQL.\\
+Authentication and tenancy & Register and authenticate organisations and admins; scope log data to the owning organisation.\\
+Security dashboard & Display processed logs, classifications and incident information.\\
+Incident prioritisation & Allow events to be viewed and prioritised by assigned risk.\\
+Incident details & Provide original log data, classification and available investigation results for a selected event.\\
+API documentation & Expose OpenAPI/Swagger documentation.\\
+\end{longtable}
+\normalsize
+
+\section{Non-Functional Requirements}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{12.3cm}}
+\caption{Non-functional requirements}
+\label{tab:nfr}\\
+\toprule
+\textbf{Category} & \textbf{Requirement}\\
+\midrule
+\endfirsthead
+\caption[]{Non-functional requirements (continued)}\\
+\toprule
+\textbf{Category} & \textbf{Requirement}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Performance & Classify logs with minimal delay and avoid unnecessary LLM invocations for routine events.\\
+Processing efficiency & Handle routine classification without an external LLM request per event.\\
+Scalability & Support future capacity growth through optimised preprocessing, inference and task management.\\
+Reliability & Handle invalid inputs and processing failures without terminating the application; fall back gracefully when the LLM is unavailable.\\
+Data persistence & Stored logs and results remain available in PostgreSQL after restarts.\\
+Security & Protect log data and records against unauthorised access, disclosure and modification.\\
+Input validation & Validate and sanitise all incoming log data and API parameters.\\
+Maintainability & Modular architecture so classifier, LLM service and database layer can change independently.\\
+Usability & Present events clearly so users can find high-priority incidents quickly.\\
+Compatibility & Run in the supported Windows 11 development environment with compatible dependencies.\\
+Observability & Keep operational logs and error information for debugging and monitoring.\\
+Configuration management & Keep credentials and tokens outside source code.\\
+Resource efficiency & Minimise CPU, memory, network and LLM inference use during routine processing.\\
+\end{longtable}
+\normalsize
+
+\section{Threat Model and Security Impact Analysis}
+SentinelLog-AI processes sensitive security information and interacts with several components: the backend API, an application programming interface, ML classifier, LLM analysis service, task queue and PostgreSQL. Confidentiality, integrity or availability may be changed by a weakness in any of them. The STRIDE methodology (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege)~\cite{shostack2014} is employed to spot threats, assess their impact and choose mitigations.
+
+\subsection{Assets to be Protected}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{4.6cm} >{\raggedright\arraybackslash}p{7.8cm}}
+\caption{Assets to protect}
+\label{tab:assets}\\
+\toprule
+\textbf{Asset} & \textbf{Description} & \textbf{Security importance}\\
+\midrule
+\endfirsthead
+\caption[]{Assets to protect (continued)}\\
+\toprule
+\textbf{Asset} & \textbf{Description} & \textbf{Security importance}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Raw security logs & Original messages from external sources & May contain sensitive system information, IP addresses, usernames and operational details\\
+Classification results & ML-generated classes and scores & Incorrect modification may cause real threats to be overlooked\\
+ML model and features & Trained pipeline (TF-IDF, encoders, Linear SVM) & Unauthorised modification affects accuracy and reliability\\
+LLM analysis results & Explanations, attack types, ATT\&CK mappings & May contain sensitive or misleading recommendations\\
+Database records & Persisted logs, incidents, analyses & Must be protected from unauthorised reading, modification and deletion\\
+API credentials & Database and LLM service credentials (\texttt{HF\_TOKEN}) & Compromise gives access to connected services\\
+Task queue & Pending investigation tasks & Tampering or exhaustion interrupts analysis\\
+Application configuration & Environment variables and settings & Exposure may reveal credentials or internal details\\
+\end{longtable}
+\normalsize
+
+\subsection{Identified Threats and Security Impact (Security Attacks)}
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{5.4cm}}
+\caption{Identified threats, attack scenarios, impact and mitigations}
+\label{tab:threats}\\
+\toprule
+\textbf{Threat} & \textbf{Attack scenario} & \textbf{Security effect} & \textbf{Suggested mitigation}\\
+\midrule
+\endfirsthead
+\caption[]{Identified threats, attack scenarios, impact and mitigations (continued)}\\
+\toprule
+\textbf{Threat} & \textbf{Attack scenario} & \textbf{Security effect} & \textbf{Suggested mitigation}\\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r}{Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Spoofing & Attacker submits fabricated logs impersonating a trusted source & Integrity: false events influence classification & Authenticate log sources; validate source identity\\
+Log injection & Crafted content or control characters inserted in log messages & Integrity: records and downstream processing manipulated & Validate and normalise input; parameterised queries\\
+ML evasion & Malicious patterns altered to resemble normal activity & Integrity: attacks classified as low risk & Evaluate adversarial inputs; monitor errors; retrain periodically\\
+Queue exhaustion & Large volume of events generates many investigation tasks & Availability: queue and LLM service overloaded & Rate limiting; queue-size limits; resource controls\\
+Prompt injection & Log text contains instructions aimed at the LLM & Integrity: misleading explanations or unsafe recommendations & Treat logs as untrusted data; isolate instructions from log content (delimiters); validate structured LLM output\\
+Sensitive information disclosure & Credentials, tokens or personal data in raw logs forwarded to the LLM & Confidentiality: exposure to an external service & Redact sensitive fields; minimise transmitted data\\
+Database injection & Malicious input aimed at database queries & Integrity and confidentiality: unauthorised access or modification & SQLAlchemy parameterised operations; validation; least-privilege DB user\\
+Unauthorised API access & Access to ingestion or investigation endpoints without authorisation & Confidentiality and integrity: records exposed or altered & Authentication, authorisation and endpoint-level access control\\
+Credential exposure & Secrets leaked through source code, logs or config files & Confidentiality: access to external services or storage & Environment variables or a secrets manager; never log credentials\\
+Denial of service & Excessive API requests or oversized log messages & Availability: resources exhausted & Request-size limits, rate limiting, timeouts, monitoring\\
+Repudiation & A user or attacker denies performing an operation & Accountability: forensic analysis becomes difficult & Timestamped audit records for important operations\\
+\end{longtable}
+\normalsize
+
+\subsection{Implemented Security Controls}
+The store writes several of these mitigations, including passwords are hashed with Argon2id (64~MiB memory cost, 3 versions, parallelism 4). Access tokens are signed JWTs (HS256) with a 15-minute lifetime and refresh tokens last 7 days. Login, registration and password-reset endpoints are rate restricted per IP address employing SlowAPI (to take one instance 5 login attempts per minute). Secrets are read from a \texttt{.env} file. Database access uses SQLAlchemy parameterised queries. Log data is tied to an owning organisation. The LLM prompt wraps all log content in delimiters and instructs the model to treat it as untrusted data. And a GitHub Actions workflow runs Semgrep (OWASP Top Ten, Python, FastAPI rule sets) and a Trivy dependency scan on every push and pull request to \texttt{main}, in actual application.
+
+% =====================================================================
+\chapter{Design Methodology}
+% =====================================================================
+\section{Modular Architecture}
+SentinelLog-AI follows a modular architecture in which each concern is separated in its own module with a stipulated interface, so that the classifier, LLM service or database layer can be changed without altering the others. The backend is organised as a set of feature modules, each with its own \texttt{api}, \texttt{schemas}, \texttt{service}, \texttt{repository} and \texttt{models} layers:
+
+\begin{table}[htbp]
+\centering
+\caption{Backend modules}
+\label{tab:modules}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.6cm} >{\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Module} & \textbf{Route prefix} & \textbf{Responsibility}\\
+\midrule
+\texttt{auth} & \texttt{/api/v1/auth} & Registration, login, token refresh, sessions, permissions\\
+\texttt{organization} & \texttt{/api/v1/organization} & Organisation profile and management\\
+\texttt{log} & \texttt{/logs} & Ingestion, batch ingestion, queue, triage orchestration, explainable results\\
+\texttt{aiModel} & \texttt{/model} & ML inference (\texttt{/predict}, \texttt{/health})\\
+\texttt{llmSservices} & \texttt{/llm} & LLM analysis (\texttt{/analyze}, \texttt{/health}) and prompt\\
+\texttt{core} & --- & Configuration, database engine, security primitives, rate limiter\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The \texttt{LogTriageService} acts as the orchestrator that calls the ML service, decides whether to increase, calls the LLM service and carries on the finding, in many respects. In fact, within each module the layers are kept separate, namely the \emph{API layer} handles HTTP, the \emph{service layer} includes business logic, the \emph{repository layer} is the only code that's touching the database, and \emph{schemas} (Pydantic) validate data crossing a boundary, on the whole.
+
+\section{Data Flow Diagram}
+Figure~\ref{fig:dfd} shows the level-1 data flow diagram. The dashboard is reading findings back through the API, an application programming interface. In fact, a log handed in by an confirmed real user is checked and queued, classified by the ML model, built up to the LLM only when needed, and stored, in real-world scenarios.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=14mm and 16mm]
+  \node[ext] (user) {Admin / Log source};
+  \node[proc,right=of user] (p1) {P1\\Authenticate\\\& validate};
+  \node[proc,right=of p1] (p2) {P2\\Queue\\(FIFO)};
+  \node[proc,right=of p2] (p3) {P3\\ML\\classify};
+  \node[proc,below=18mm of p3] (p4) {P4\\LLM\\explain};
+  \node[proc,below=18mm of p2] (p5) {P5\\Persist\\result};
+  \node[proc,below=18mm of p1] (p6) {P6\\Query \&\\display};
+  \node[store,below=14mm of p5,xshift=-1.5cm,minimum width=3cm] (d2) {D2: log\_records};
+  \node[store,below=14mm of p5,xshift=2.3cm,minimum width=3.2cm] (d3) {D3: log\_explainability};
+  \node[store,above=9mm of p1,minimum width=3.4cm] (d1) {D1: organization / auth};
+
+  \draw[arr] (user) -- node[lbl,above]{credentials, raw log} (p1);
+  \draw[arr] (p1) -- node[lbl,above]{valid log} (p2);
+  \draw[arr] (p2) -- node[lbl,above]{queued item} (p3);
+  \draw[arr] (p3) -- node[lbl,right]{WARN / unknown} (p4);
+  \draw[arr] (p3) -- node[lbl,above,sloped,pos=.5]{INFO (no LLM)} (p5);
+  \draw[arr] (p4) -- node[lbl,above,sloped]{explanation} (p5);
+  \draw[arr] (p5) -- (d2);
+  \draw[arr] (p5) -- (d3);
+  \draw[arr,<->] (p1) -- (d1);
+  \draw[arr] (d2.west) -| node[lbl,pos=.25,above]{records} (p6.south);
+  \draw[arr] (d3.south) -- ++(0,-6mm) -| node[lbl,pos=.2,below]{explanations} ([xshift=3mm]p6.south);
+  \draw[arr] (p6) -- node[lbl,above]{results} (user);
+\end{tikzpicture}
+\caption{Level-1 data flow diagram of SentinelLog-AI}
+\label{fig:dfd}
+\end{figure}
+
+% \begin{figure}[htbp]
+% \centering
+% \includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{dataflow.png}
+% \caption{Data flow diagram implementation}
+% \label{fig:dataflow-image}
+% \end{figure}
+
+\section{Use Case Diagram}
+Two actors interact with the framework, like the \emph{Security Analyst / Admin}, who operates the dashboard, and the \emph{Log Source}, an external system or script that turns in logs, in real-world scenarios. The LLM provider is an external service employed by the system. Figure~\ref{fig:usecase} is showing the use cases.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  uc/.style={draw,ellipse,align=center,font=\scriptsize,minimum width=3.8cm,minimum height=8mm,fill=blue!5,inner sep=1pt},
+  actor/.style={align=center,font=\footnotesize}]
+  % system boundary
+  \draw[rounded corners=4pt,thick] (-3.6,-6.2) rectangle (3.8,1.2);
+  \node[font=\footnotesize\bfseries] at (0.1,0.9) {SentinelLog-AI};
+  \node[uc] (u1) at (0,0.1) {Register organisation / Log in};
+  \node[uc] (u2) at (0,-0.95) {Submit single log};
+  \node[uc] (u3) at (0,-2.0) {Submit batch of logs};
+  \node[uc] (u4) at (0,-3.05) {Track queue status};
+  \node[uc] (u5) at (0,-4.1) {View explainable incidents};
+  \node[uc] (u6) at (0,-5.15) {View summary and log details};
+  \node[uc,fill=orange!10] (u7) at (6.6,-2.55) {Classify log (ML)};
+  \node[uc,fill=orange!10] (u8) at (6.6,-4.1) {Explain, map to ATT\&CK,\\recommend (LLM)};
+  % actors
+  \begin{scope}[shift={(-5.4,-2.6)}]
+    \draw[thick] (0,0.9) circle (0.2);
+    \draw[thick] (0,0.7) -- (0,0) (-0.35,0.5) -- (0.35,0.5) (0,0) -- (-0.3,-0.6) (0,0) -- (0.3,-0.6);
+    \node[actor] at (0,-1.1) {Security Analyst\\/ Admin};
+  \end{scope}
+  \begin{scope}[shift={(-5.4,0.3)}]
+    \draw[thick] (0,0.9) circle (0.2);
+    \draw[thick] (0,0.7) -- (0,0) (-0.35,0.5) -- (0.35,0.5) (0,0) -- (-0.3,-0.6) (0,0) -- (0.3,-0.6);
+    \node[actor] at (0,-1.1) {Log Source};
+  \end{scope}
+  \draw (-5.1,-2.7) -- (u1.west);
+  \draw (-5.1,-2.7) -- (u4.west);
+  \draw (-5.1,-2.7) -- (u5.west);
+  \draw (-5.1,-2.7) -- (u6.west);
+  \draw (-5.1,0.1) -- (u2.west);
+  \draw (-5.1,0.1) -- (u3.west);
+  \draw[dashed,-{Stealth}] (u2.east) -- node[lbl,above,sloped]{<<include>>} (u7.west);
+  \draw[dashed,-{Stealth}] (u3.east) -- (u7.west);
+  \draw[dashed,-{Stealth}] (u7.south) -- node[lbl,right]{<<extend>> if WARN} (u8.north);
+\end{tikzpicture}
+\caption{Use case diagram}
+\label{fig:usecase}
+\end{figure}
+
+\section{Triage Decision Logic}
+The orchestrator increases a log to the LLM if any of the following holds, like the ML class is \texttt{WARN} (or \texttt{ERROR}/\texttt{UNKNOWN}). The model is often unavailable or couldn't classify the log. Or the log text comprises a high-severity keyword (for example \emph{error}, \emph{exception}, \emph{corrupted}, \emph{fatal}, \emph{unauthorized}, \emph{permission denied}, \emph{checksum}, \emph{fail}), on the whole. A keyword hit on an \texttt{INFO}-classified log is, to a large extent, pushing it to \texttt{WARN}. In fact, routine \texttt{INFO} logs are stored directly with \texttt{predicted\_by = ML}, built up logs with \texttt{ML+LLM} (or \texttt{LLM} if the ML model couldn't project), in actual application.
+
+\section{Database Design}
+The PostgreSQL schema includes six tables: \texttt{organization} and \texttt{admin} (tenants and users), \texttt{auth\_session} and \texttt{refresh\_token} (session management), \texttt{log\_records} (every ingested log with its traits, queue number, prediction and \texttt{predicted\_by}) and \texttt{log\_explainability} (LLM output linked to a log record), in actual application. Log rows carry an \texttt{organization\_id} foreign key so that each organisation is seeing only its own data, to a significant degree. Schema changes are versioned with Alembic.
+
+% =====================================================================
+\chapter{Implementation}
+% =====================================================================
+\section{Implementation Workflow}
+\begin{enumerate}[label=\arabic*.]
+  \item \textbf{Authenticate.} The user is logging in through the dashboard and receives a JWT access token, in many respects.
+  \item \textbf{Ingest.} The request is checked by Pydantic schemas and placed in the async FIFO queue; the caller receives a queue ticket number, in real-world scenarios; in fact, all i mean is it's, A log is turned in to \texttt{POST /logs/ingest} (or \texttt{/logs/batch}), broadly speaking.
+  \item \textbf{Classify.} A background worker is building the feature row (\texttt{Content}, \texttt{Component}, \texttt{Hour}, \texttt{Minute}, \texttt{Second}, \texttt{Time\_gap}, \texttt{Pid\_freq}) and runs the saved scikit-learn pipeline, to a significant degree.
+  \item \textbf{Route.} \texttt{INFO} \texttt{WARN}, unknown or keyword-flagged logs are generally increased. Logs without alarming keywords are, by design, stored directly.
+  \item \textbf{Explain.} A rule-based fallback is creating a heuristic explanation so that the pipeline doesn't fail, if the remote LLM is unavailable, on the whole; in fact, a guarded prompt is built by the LLM service, calls Qwen2.5-72B-Instruct through the Hugging Face Inference API, an application programming interface, and checks the structured JSON response, in actual application.
+  \item \textbf{Persist.} Plus The log record and (for increased logs) the explainability record are written to PostgreSQL, in actual application.
+  \item \textbf{Display.} The dashboard polls the queue status and reads summaries and explainable incidents, through the API, on the whole.
+\end{enumerate}
+
+\section{Tools and Libraries}
+\begin{table}[H]
+\centering
+\caption{Libraries used (from \texttt{requirements.txt})}
+\label{tab:libs}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Library} & \textbf{Use}\\
+\midrule
+\texttt{fastapi}, \texttt{uvicorn[standard]} & REST API framework and ASGI server\\
+\texttt{sqlalchemy[asyncio]}, \texttt{asyncpg}, \texttt{psycopg[binary]} & Async ORM and PostgreSQL drivers (async at runtime, sync for migrations)\\
+\texttt{alembic} & Database migrations\\
+\texttt{pydantic-settings}, \texttt{python-dotenv} & Configuration from environment\\
+\texttt{argon2-cffi}, \texttt{PyJWT} & Password hashing and token handling\\
+\texttt{slowapi} & Rate limiting\\
+\texttt{email-validator}, \texttt{python-multipart} & Input validation, form handling\\
+\texttt{numpy}, \texttt{pandas}, \texttt{scikit-learn}, \texttt{torch} & Data processing and machine learning\\
+\texttt{huggingface\_hub} & Client for the LLM inference API\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Dataset: Loghub HDFS}
+Loghub~\cite{loghub} is a large collection of system log datasets for AI-driven log analytics. In turn, the project employs the \texttt{HDFS\_2k} sample, a 2{,}000-line structured subset stored at \texttt{backend/app/modules/aiModel/dataset/HDFS\_2k.log\_structured.csv}, in actual application. And thus, each row has the following fields: \texttt{LineId}, \texttt{Date}, \texttt{Time}, \texttt{Pid}, \texttt{Level}, \texttt{Component}, \texttt{Content}, \texttt{EventId} and \texttt{EventTemplate}, to a significant degree. The HDFS logs come from a Hadoop Distributed File System cluster~\cite{xu2009}.
+
+\begin{table}[htbp]
+\centering
+\caption{HDFS\_2k dataset summary}
+\label{tab:dataset}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Property} & \textbf{Value}\\
+\midrule
+Total log lines & 2{,}000\\
+\texttt{INFO} lines & 1{,}920 (96\%)\\
+\texttt{WARN} lines & 80 (4\%)\\
+Distinct components & 6\\
+Target column & \texttt{Level}\\
+Train / test split & 80\% / 20\% (1{,}600 / 400), stratified, \texttt{random\_state=42}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.25\textheight,keepaspectratio]{dataset_summary.png}
+\caption{Dataset summary}
+\label{fig:dataset-summary}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.25\textheight,keepaspectratio]{first-3-lines-dataset.png}
+\caption{First three lines of the dataset}
+\label{fig:first-three-lines}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.25\textheight,keepaspectratio]{log-level-distribution.png}
+\caption{Log-level distribution}
+\label{fig:log-level-distribution}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.25\textheight,keepaspectratio]{graphical-representation-of-count.png}
+\caption{Graphical representation of log counts}
+\label{fig:log-counts}
+\end{figure}
+
+The data is strongly imbalanced, so the classifier uses class weighting (\texttt{class\_weight='balanced'}). \texttt{Date} and \texttt{Time} are encoded as HHMMSS integers, so \texttt{Time} is zero-padded to six digits and split into hour, minute and second.
+
+\section{Module Descriptions}
+
+\subsection{ML Model Module}
+The ML module (\texttt{backend/app/modules/aiModel}) includes the training notebook (\texttt{main.ipynb}), the saved pipeline (\texttt{hdfs\_log\_classifier.joblib}), a Pydantic input/output schema, a service that loads the model once at start-up and an API (\texttt{POST /model/predict}, \texttt{GET /model/health}). The pipeline combines three feature groups in a \texttt{ColumnTransformer}:
+\begin{itemize}[nosep]
+  \item \textbf{Text:} TF-IDF on \texttt{Content} (maximum 1{,}500 features, English stop words removed);
+  \item \textbf{Categorical:} one-hot encoding of \texttt{Component};
+  \item \textbf{Numeric:} standardised \texttt{Hour}, \texttt{Minute}, \texttt{Second}, \texttt{Time\_gap} (seconds since the previous log) and \texttt{Pid\_freq} (how often that process ID emerges), broadly speaking.
+\end{itemize}
+Bluntly, these are feeding a \texttt{LinearSVC} classifier~\cite{liblinear,sklearn}. At inference, the service reports the projected class, the decision-function margin. As, well, whether the log is needing LLM escalation, and returns \texttt{UNKNOWN} with escalation set, so the log is analysed by the LLM instead of being silently dropped, to a significant degree.
+
+\subsection{LLM Module}
+The LLM module (\texttt{backend/app/modules/llmSservices}) exposes \texttt{POST /llm/analyze} and \texttt{GET /llm/health}. And thus, the request includes \texttt{raw\_log}, \texttt{log\_type}, \texttt{machine} and \texttt{extra\_context}. The prompt (\texttt{promt.py}) casts the model as a senior security analyst and wraps every input field in tags, telling the model never to follow instructions that are appearing inside the log data (a prompt-injection defence), on the whole. The model is Qwen2.5-72B-Instruct~\cite{qwen25} accessed through \texttt{InferenceClient}. The response is checked against a strict Pydantic schema, \texttt{ExplainabilityResult}, with the fields \texttt{threat\_level} (LOW, MEDIUM, HIGH, CRITICAL or UNKNOWN), \texttt{detection\_summary}, \texttt{explanation}, \texttt{recommended\_action}, \texttt{attack\_type}, \texttt{mitre\_attack\_ids} (at most 20), \texttt{llm\_model} and \texttt{confidence\_score}, in many respects. And thus, a rule-based fallback inspects the log for patterns such as permission denials, network timeouts, block errors and termination messages, and returns a finding in the same schema, if no \texttt{HF\_TOKEN} is set up or the API stops working.
+
+\subsection{Backend Module}
+The backend (\texttt{backend/app/main.py}) creates the FastAPI application, registers CORS for the local frontend origins, attaches the rate limiter and includes the routers. A lifespan handler initialises and starts the queue manager at start-up and stops it on shutdown. The \texttt{log} module contains the \texttt{LogQueueManager} (an \texttt{asyncio} FIFO queue with configurable concurrent workers, ticket numbers and the states \texttt{QUEUED}, \texttt{PROCESSING}, \texttt{COMPLETED}, \texttt{FAILED}) and the \texttt{LogTriageService} that implements the decision logic of Section~4.4. Table~\ref{tab:endpoints} lists the main endpoints.
+
+\begin{table}[htbp]
+\centering
+\caption{Main API endpoints}
+\label{tab:endpoints}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{>{\ttfamily\raggedright\arraybackslash}p{5.3cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Endpoint} & \textbf{Purpose}\\
+\midrule
+GET /health & Service health\\
+/api/v1/auth/* & Registration, login, refresh, logout and related auth operations\\
+/api/v1/organization/* & Organisation management\\
+POST /logs/ingest & Submit one log; returns result or queue ticket\\
+POST /logs/batch & Submit multiple logs\\
+GET /logs/queue/metrics & Queue metrics\\
+GET /logs/queue/\{queue\_number\} & Status of a queued item\\
+GET /logs/summary & Aggregate summary\\
+GET /logs/explainable & List logs with LLM explanations\\
+GET /logs/explainable/\{log\_id\} & One explanation\\
+GET /logs/\{log\_id\} & One log record\\
+POST /model/predict, GET /model/health & ML inference and health\\
+POST /llm/analyze, GET /llm/health & LLM analysis and health\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Database Module}
+PostgreSQL stores all persistent data through the async SQLAlchemy models. Six Alembic migration scripts under \texttt{backend/app/alembic/versions} create and evolve the schema, including tenant ownership for logs and the auth session and refresh-token tables. The \texttt{log\_records} table is indexed on creation time, prediction and a unique queue number; \texttt{log\_explainability} references the log record and holds the LLM output. Six tables are stated (Section~4.5).
+
+\subsection{Frontend Module}
+The frontend (\texttt{frontend/}) is a browser dashboard written in plain HTML, the standard web markup language, CSS, the web styling language, and JavaScript (\texttt{index.html}, \texttt{styles.css}, \texttt{app.js}), and is logging the user in through \texttt{/api/v1/auth/login}, stores the access token in the browser, and calls the backend with a Bearer token, which lets the user turn in logs (covering from a file), view the handled logs and explainable incidents, and see queue and summary information. A React/Electron dashboard is planned. The API base URL defaults to \texttt{http://localhost:8000} and can be changed in the interface.
+
+\section{Setup and Execution}
+The commands below assume Windows with Python 3.10+, PostgreSQL and Git installed. Use the equivalent activation command on Linux/macOS.
+
+\paragraph{1. Clone the repository.}
+\begin{lstlisting}[language=bash]
+git clone https://github.com/KDhyanaSamaga/SentinelLog-AI.git
+cd SentinelLog-AI
+\end{lstlisting}
+
+\paragraph{2. Create a virtual environment and install dependencies.}
+\begin{lstlisting}[language=bash]
+python -m venv venv
+venv\Scripts\activate          # Linux/macOS: source venv/bin/activate
+pip install -r requirements.txt
+\end{lstlisting}
+
+\paragraph{3. Create the PostgreSQL database.}
+\begin{lstlisting}[language=bash]
+psql -U postgres -c "CREATE DATABASE sentinellog;"
+\end{lstlisting}
+
+\paragraph{4. Configure environment variables.} Copy the example file and edit it.
+\begin{lstlisting}[language=bash]
+copy backend\.env.example backend\.env     # Linux/macOS: cp
+\end{lstlisting}
+\begin{lstlisting}
+DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/sentinellog
+SECRET_KEY=<generate a random string of at least 32 characters>
+ALGORITHM=HS256
+JWT_ISSUER=sentinellog-ai
+JWT_AUDIENCE=sentinellog-ai
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=7
+LOGIN_RATE_LIMIT=5/minute
+HF_TOKEN=<your Hugging Face access token>
+\end{lstlisting}
+A strong secret can be generated with:
+\begin{lstlisting}[language=bash]
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+\end{lstlisting}
+
+\paragraph{5. Authenticate with Hugging Face (optional, enables the real LLM).}
+\begin{lstlisting}[language=bash]
+hf auth login
+\end{lstlisting}
+Without a token the system still runs, using the rule-based fallback explanation.
+
+\paragraph{6. Apply database migrations.}
+\begin{lstlisting}[language=bash]
+cd backend
+alembic -c app/alembic.ini upgrade head    # TODO: verify this path on your machine
+\end{lstlisting}
+
+\paragraph{7. Start the backend.}
+\begin{lstlisting}[language=bash]
+uvicorn app.main:app --reload
+\end{lstlisting}
+The API is served at \texttt{http://localhost:8000}; interactive documentation is at \texttt{/docs} (Swagger UI).
+
+\paragraph{8. Start the frontend.} The backend allows the origins \texttt{localhost:3000}, \texttt{localhost:5500} and \texttt{127.0.0.1:5500}. Serve the \texttt{frontend} folder on one of these, for example:
+\begin{lstlisting}[language=bash]
+cd ..\frontend
+python -m http.server 5500
+\end{lstlisting}
+Then open \texttt{http://localhost:5500}, register an organisation, log in and submit logs.
+
+\paragraph{9. Test the pipeline.} Example request body for \texttt{POST /llm/analyze}:
+\begin{lstlisting}
+{
+  "raw_log": "2026-09-17 09:14:22.401 [WARN] [AuthService] Failed login attempt from IP 192.168.1.105: User 'jdoe' reached max retry threshold (5/5). Account temporarily locked.",
+  "log_type": "security_audit",
+  "machine": "prod-auth-server-02",
+  "extra_context": "User 'jdoe' belongs to the elevated administrator group. Consecutive failures originated from an internal subnet over a 2-minute period."
+}
+\end{lstlisting}
+
+\paragraph{10. Retrain the ML model (optional).} Open \texttt{backend/app/modules/aiModel/main.ipynb} in Jupyter or VS Code and run all cells. The last training cells save the pipeline as \texttt{hdfs\_log\_classifier.joblib} in the same folder.
+
+% =====================================================================
+\chapter{Results and Analysis}
+% =====================================================================
+\section{Model Training Pipeline}
+The following code shows the feature engineering and model pipeline used for training. A small unused helper (\texttt{parse\_time}) from the notebook has been omitted from the listing.
+
+\begin{lstlisting}[language=Python,caption={Feature engineering}]
+# Split zero-padded HHMMSS time into parts
+time_str = df['Time'].astype(str).str.zfill(6)
+df['Hour']   = time_str.str[:2].astype(int)
+df['Minute'] = time_str.str[2:4].astype(int)
+df['Second'] = time_str.str[4:].astype(int)
+
+# Timestamp in seconds, then gap between consecutive log entries
+timestamp = df['Time'].apply(
+    lambda x: int(str(x).zfill(6)[:2]) * 3600
+            + int(str(x).zfill(6)[2:4]) * 60
+            + int(str(x).zfill(6)[4:]))
+df['Time_gap'] = timestamp.diff().fillna(0)
+
+# PID frequency (process-level statistic)
+pid_counts = df['Pid'].value_counts().to_dict()
+df['Pid_freq'] = df['Pid'].map(pid_counts)
+
+text_col   = 'Content'
+cat_cols   = ['Component']
+num_cols   = ['Hour', 'Minute', 'Second', 'Time_gap', 'Pid_freq']
+target_col = 'Level'
+
+X = df[[text_col] + cat_cols + num_cols]
+y = df[target_col]
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python,caption={Preprocessing and model pipeline with class weighting}]
+preprocessor = ColumnTransformer(transformers=[
+    ('text', TfidfVectorizer(max_features=1500, stop_words='english'), text_col),
+    ('cat',  OneHotEncoder(handle_unknown='ignore'), cat_cols),
+    ('num',  StandardScaler(), num_cols)
+])
+
+model_pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('classifier', LinearSVC(class_weight='balanced',
+                             random_state=42, max_iter=10000))
+])
+\end{lstlisting}
+
+\section{Classification Results}
+The model was evaluated on a stratified 20\% hold-out set of 400 logs (384 \texttt{INFO}, 16 \texttt{WARN}).
+
+\begin{table}[htbp]
+\centering
+\caption{Classification report on the test set}
+\label{tab:cr}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{Support}\\
+\midrule
+INFO & 1.00 & 1.00 & 1.00 & 384\\
+WARN & 1.00 & 1.00 & 1.00 & 16\\
+\midrule
+Accuracy & & & 1.00 & 400\\
+Macro average & 1.00 & 1.00 & 1.00 & 400\\
+Weighted average & 1.00 & 1.00 & 1.00 & 400\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Confusion matrix (rows: actual, columns: predicted)}
+\label{tab:cm}
+\begin{tabular}{l|cc}
+ & \textbf{Pred.\ INFO} & \textbf{Pred.\ WARN}\\
+\hline
+\textbf{Actual INFO} & 384 & 0\\
+\textbf{Actual WARN} & 0 & 16\\
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.25\textheight,keepaspectratio]{classification report.png}
+\caption{Classification report output}
+\label{fig:classification-report}
+\end{figure}
+
+All 400 test logs were classified correctly: there were no false positives (no normal log was escalated unnecessarily) and no false negatives (no \texttt{WARN} log was missed).
+
+\section{LLM Output Examples}
+Two manual tests of the LLM analysis service were recorded in the project documentation, in real-world scenarios. Indeed, for a failed-login log (five consecutive failures on an administrator account from an internal tackle), the service flagged a possible brute-force or unauthorised-access try and recommended immediate study, on the whole. For a routine HDFS \texttt{PacketResponder ... terminating} log, it correctly sketched the entry as normal operational behaviour with no security concern. This shows the intended behaviour, such as the LLM usefully is explaining for abnormal events and doesn't over-alarm on routine ones. These are qualitative checks and not a systematic check.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{llm-api-testing-result.png}
+\caption{LLM API testing result}
+\label{fig:llm-api-result}
+\end{figure}
+
+\section{Application and Integration Results}
+The following screenshots document the system from startup through authenticated use, API verification, persistence and final log analysis. Together, they provide visual evidence that the implemented components operate as an integrated application.
+
+\subsection{API and Server Verification}
+The FastAPI Swagger interface was used to verify the available endpoints in sequence. The first three screenshots show the API documentation and endpoint testing workflow.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{api-1.png}
+\caption{FastAPI Swagger documentation: API endpoint verification, step 1}
+\label{fig:api-endpoints-1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{api-2.png}
+\caption{FastAPI Swagger documentation: API endpoint verification, step 2}
+\label{fig:api-endpoints-2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{api-3.png}
+\caption{FastAPI Swagger documentation: API endpoint verification, step 3}
+\label{fig:api-endpoints-3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{server-started.png}
+\caption{Uvicorn server running successfully}
+\label{fig:server-started}
+\end{figure}
+
+\subsection{Authentication, Persistence and Dashboard}
+The application interface was then tested through the browser. The screenshots show the initial login screen, the dashboard after authentication, PostgreSQL records viewed in pgAdmin and the rate-limiting response after more than five invalid login attempts.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{interface-ui-login.png}
+\caption{Initial SentinelLog-AI login interface}
+\label{fig:interface-login}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{dashbord.png}
+\caption{SentinelLog-AI dashboard after successful login}
+\label{fig:dashboard}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{database-pgadmin.png}
+\caption{Persisted SentinelLog-AI data displayed in pgAdmin}
+\label{fig:database-pgadmin}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{security-morethan-5-login-attempt-fail.png}
+\caption{Rate-limit error after more than five invalid login attempts}
+\label{fig:login-rate-limit}
+\end{figure}
+
+\subsection{LLM Analysis and Final Dashboard}
+Suspicious logs are escalated for LLM analysis and the resulting explanation is shown in the dashboard. The final dashboard aggregates the processed logs by level and displays the associated reasons.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{llm-output-in-ui.png}
+\caption{LLM-processed suspicious log displayed in the dashboard}
+\label{fig:llm-output-ui}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.30\textheight,keepaspectratio]{final-dashbord.png}
+\caption{Final dashboard showing log counts, warning and information totals, and reasons}
+\label{fig:final-dashboard}
+\end{figure}
+
+\section{Performance Analysis}
+\paragraph{Strengths.}
+\begin{itemize}[nosep]
+  \item Perfect precision and recall on both classes means the classifier would keep routine logs out of the LLM path and wouldn't miss the abnormal ones in this dataset, which is the behaviour the architecture rests on, in real-world scenarios.
+  Inference on a single log is cheap, so the classifier can (to some degree) triage every log without the cost of an LLM call, in many respects. \item \texttt{LinearSVC} on thin TF-IDF features is very fast to train and to run, in actual application.
+  The 96\%/4\% imbalance is being handled by \item Class weighting. Without it, a model that always projects \texttt{INFO} would already reach 96\% precision while missing every warning, on the whole.
+  \item The decision logic is currently conservative, like unknown or unclassifiable logs and keyword hits are increased rather, broadly speaking. Still ignored. An LLM outage is, indeed, degrading to a rule-based explanation rather than a failure.
+\end{itemize}
+
+\paragraph{Why 100\% should be read with caution.}
+\begin{itemize}[nosep]
+  \item \textbf{Small, easy test set.} The test set includes only 16 \texttt{WARN} logs; and thus, HDFS log levels are tied closely to a small number of message templates, so the label is largely figured out by the message text and component, which is making the task easy for a linear model, in actual application.
+  \item \textbf{Possible information leakage.} \texttt{Time\_gap} and \texttt{Pid\_freq} are computed over the whole dataset before the train/test split, so test rows impact the attributes of training rows, on the whole. This is mild, but a stricter protocol would compute them, within each split or in a streaming fashion, in real-world scenarios.
+  \item \textbf{A different task from threat detection.} As, well, the target is the original log \emph{level} (\texttt{INFO}/\texttt{WARN}), not a security-risk label. High precision is showing the model has learned to reproduce log severity, not that it can detect attacks.
+  \item \textbf{Single small sample.} The 2{,}000-line sample comes from one framework. Findings may (to a meaningful extent) not carry over to the full HDFS dataset or to other log sources, broadly speaking.
+\end{itemize}
+A fair claim is therefore that the pipeline works end to end and the classifier is reliable on this dataset. It does not yet show generalisation.
+
+\section{Limitations}
+\begin{enumerate}[label=\arabic*.]
+  \item The classifier is binary (INFO/WARN) and trained on one HDFS sample. The Low/Medium/High tiers recapped in the design aren't yet made, on the whole.
+  \item No labelled attack data was, in effect, employed, so detection of real intrusions is normally untested, to a significant degree.
+  \item The framework's central claim (lessening LLM usage without missing critical events) hasn't yet been measured against an all-logs-to-LLM baseline for token use and latency, in many respects.
+  Pending tasks are lost if the server restarts. \item The queue is in-process: it isn't durable, has no automatic retry and doesn't scale, across the processes, in actual application.
+  \item LLM output isn't independently checked. Hallucinated MITRE IDs or unsafe recommendations are possible, and calling an external API means log content leaves the framework unless it's redacted, in real-world scenarios.
+  \item The ML model is usually vulnerable to evasion by attackers who craft log text to resemble normal entries, and isn't retrained automatically as log patterns drift, broadly speaking.
+  \item The model file is stored in the repo, and also, loaded without integrity checking, so this is a tampering risk in production (see the threat model), in real-world scenarios.
+  \item The frontend is a elementary dashboard. Role-based views and the MITRE ATT\&CK visualisation outlined in the design aren't yet implemented, in real-world scenarios.
+\end{enumerate}
+
+\section{Future Scope}
+\begin{itemize}[nosep]
+  \item As, well, train on the full labelled Loghub HDFS and BGL datasets and add attack-oriented datasets; appraise with cross-validation and time-based splits, and report precision, recall, F1 and ROC/PR curves, in actual application.
+  \item And generalize to three risk tiers (Low, Medium, High) employing severity, frequency and system criticality, possibly with adjusted probabilities.
+  \item Measure LLM-call reduction, token consumption and latency against a baseline that's sending all logs to the LLM, to a significant degree.
+  \item What's more, replace the in-process queue with Redis Streams (or a akin broker) with durable storage, retries and separate workers, as in the target design, in real-world scenarios.
+  \item Add RAG over the MITRE ATT\&CK knowledge base to ground technique mapping and reduce hallucinated IDs~\cite{adediran2026}, broadly speaking.
+  \item Add LangChain orchestration, redaction of sensitive fields before LLM calls, and a local LLM option for privacy-sensitive deployments, in many respects.
+  \item Build the React/Electron dashboard with incident review, MITRE ATT\&CK views and analyst approve/reject workflow with audit logging, on the whole.
+  \item Add drift monitoring and scheduled retraining, and adversarial testing of the classifier.
+\end{itemize}
+
+% =====================================================================
+\chapter{Conclusion}
+% =====================================================================
+A applied, cost-aware way is shown by SentinelLog-AI to combine machine learning and LLMs for security-log examination, broadly speaking. A fast TF-IDF and Linear SVM classifier handles the full log stream. What's more, only abnormal or uncertain events are sent to an LLM for explanation, attack identification, MITRE ATT\&CK mapping and response suggestions, in many respects. The implemented framework includes a secured FastAPI backend with PostgreSQL storage, an async ingestion queue, an ML triage service, an LLM analysis service with a tough fallback and a working dashboard. On the HDFS\_2k sample the classifier hit perfect scores on a 400-log hold-out set, but still, the small and easy nature of the data means this should be treated as a proof of notion rather than indication of general performance. Broader datasets, three-tier risk classification, quantified cost savings and a durable queue are the next phases towards a production-ready system.
+
+% =====================================================================
+% REFERENCES
+% =====================================================================
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{References}
+
+\bibitem{logfit}
+C.~Almodovar, F.~Sabrina, S.~Karimi, and S.~Azad, ``LogFiT: Log anomaly detection using fine-tuned language models,'' \emph{IEEE Transactions on Network and Service Management}, vol.~21, no.~2, pp.~1715--1723, 2024. doi:10.1109/TNSM.2024.3358730.
+
+\bibitem{balogh2024}
+\v{S}.~Balogh, M.~Mlyn\v{c}ek, O.~Vra\v{n}\'ak, and P.~Zajac, ``Using generative AI models to support cybersecurity analysts,'' \emph{Electronics}, vol.~13, no.~23, Art.~4718, 2024. doi:10.3390/electronics13234718.
+
+\bibitem{adediran2026}
+G.~Adediran, K.~Awuson-David, and Y.~Ahmed, ``Retrieval-augmented large language model for AWS cloud threat detection and modelling: CloudTrail MITRE ATT\&CK mapping,'' \emph{Computers, Materials \& Continua}, vol.~87, no.~2, p.~100, 2026. doi:10.32604/cmc.2026.077606.
+
+\bibitem{tejero2025}
+J.~J. Tejero-Fern\'andez and A.~S\'anchez-Mac\'ian, ``Evaluating language models for threat detection in IoT security logs,'' arXiv:2507.02390 [cs.CR], Jul.\ 2025. doi:10.48550/arXiv.2507.02390.
+
+\bibitem{loghub}
+J.~Zhu, S.~He, P.~He, J.~Liu, and M.~R. Lyu, ``Loghub: A large collection of system log datasets for AI-driven log analytics,'' in \emph{Proc.\ IEEE Int.\ Symp.\ Software Reliability Engineering (ISSRE)}, 2023. % TODO: verify pages/doi
+Dataset repository: \url{https://github.com/logpai/loghub}.
+
+\bibitem{qwen25}
+Qwen Team, ``Qwen2.5 technical report,'' arXiv:2412.15115, 2024.
+
+\bibitem{fastapi}
+S.~Ram\'irez, ``FastAPI documentation.'' \url{https://fastapi.tiangolo.com/}. % TODO: add access date
+
+\end{thebibliography}
+
+\end{document}
